@@ -1,0 +1,82 @@
+version: '3'
+services:
+  # Shard 1
+  mongodb_s1_r1:
+    image: mongo:3.4
+    command: mongod --replSet r1 --noauth
+    ports:
+      - 37017:27017
+    environment:
+      TERM: xterm
+    networks:
+      - backend
+
+  mongodb_s1_r2:
+    image: mongo:3.4
+    command: mongod --replSet r1 --noauth
+    ports:
+      - 37018:27017
+    environment:
+      TERM: xterm
+    networks:
+      - backend
+
+  mongodb_s1_r3:
+    image: mongo:3.4
+    command: mongod --replSet r1 --noauth
+    ports:
+      - 37019:27017
+    environment:
+      TERM: xterm
+    networks:
+      - backend
+
+  # Shard 2
+  mongodb_s2_r1:
+    image: mongo:3.4
+    command: mongod --replSet r2 --noauth
+    ports:
+      - 47017:27017
+    environment:
+      TERM: xterm
+    networks:
+      - backend
+
+  mongodb_s2_r2:
+    image: mongo:3.4
+    command: mongod --replSet r2 --noauth
+    ports:
+      - 47018:27017
+    environment:
+      TERM: xterm
+    networks:
+      - backend
+
+  mongodb_s2_r3:
+    image: mongo:3.4
+    command: mongod --replSet r2 --noauth
+    ports:
+      - 47019:27017
+    environment:
+      TERM: xterm
+    networks:
+      - backend
+
+  replicaset_initializer:
+    image: mongo:3.4
+    volumes:
+      - .:/start
+    command: /start/init.sh
+    depends_on:
+      - mongodb_s1_r1
+      - mongodb_s1_r2
+      - mongodb_s1_r3
+      - mongodb_s2_r1
+      - mongodb_s2_r2
+      - mongodb_s2_r3
+    networks:
+      - backend
+
+networks:
+  backend:
+
